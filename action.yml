@@ -1,0 +1,18 @@
+name: 'Remove Label from Cards'
+description: 'Removes the given label from all cards in the given column.'
+inputs:
+  token:
+    description: 'github token'
+    required: true
+    default: ''
+  label_to_remove:
+    description: 'Label to remove'
+    required: true
+    default: ''
+  column_id:
+    description: 'Column id'
+    required: true
+    default: ''
+runs:
+  using: 'node12'
+  main: 'index.js'
