@@ -1,16 +1,11 @@
-name: 'Remove Label from Cards'
-description: 'Removes the given label from all cards in the given column.'
+name: 'Column Issue Label Remover'
+description: 'For each column in a list, labels are removed from all its issues.'
 inputs:
+  columns_labels:
+    description: 'An array of objects each containing a column reference and an array of labels to add'
+    required: true
   token:
     description: 'github token'
-    required: true
-    default: ''
-  label_to_remove:
-    description: 'Label to remove'
-    required: true
-    default: ''
-  column_id:
-    description: 'Column id'
     required: true
     default: ''
 runs:
