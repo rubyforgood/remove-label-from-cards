@@ -435,7 +435,7 @@ async function main () {
       }
 
       const issueNumber = issueNumberMatchCapture[1]
-      console.log(await getIssueLabels(issueNumber))
+      console.log(await getIssueLabels(parseInt(issueNumber)))
     }
     //const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
 
