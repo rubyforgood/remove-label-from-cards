@@ -6,6 +6,8 @@ const octokit = github.getOctokit(token)
 // Javascript destructuring assignment. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
 const {owner, repo} = github.context.repo
 
+const MAX_CARDS_PER_PAGE = 100 // from https://docs.github.com/en/rest/reference/projects#list-project-cards
+
 // Determines if an object is an object
 //  @param    {any} variable The object to check
 //  @returns  {boolean} true if variable is an object, false otherwise
