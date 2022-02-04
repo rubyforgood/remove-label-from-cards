@@ -1,7 +1,8 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const token = core.getInput('token');
-const octokit = github.getOctokit(token);
+const core = require('@actions/core')
+const github = require('@actions/github')
+let columns_labels = core.getInput('columns_labels')
+const token = core.getInput('token')
+const octokit = github.getOctokit(token)
 // Javascript destructuring assignment. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
 const {owner, repo} = github.context.repo
 
