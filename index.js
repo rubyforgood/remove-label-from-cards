@@ -146,7 +146,7 @@ async function getColumnCardIssues (columnId) {
 // Get a list of labels for an issue
 //  @param    {number} issueNumber The number of the issue to fetch labels for
 //  @return   {Promise} A promise representing fetching of the labels for an issue
-//    @fulfilled {Object} A list of objects each representing a label
+//    @fulfilled {Array} An array of label strings
 //  @throws   {TypeError}  for a parameter of the incorrect type
 //  @throws   {RangeError} when issueNumber is less than 1
 //  @throws   {Error}      if an error occurs while trying to fetch the project data
@@ -155,11 +155,13 @@ async function getIssueLabels (issueNumber) {
     throw new TypeError('Param issueNumber must be an integer')
   }
 
-  return await octokit.request('GET /repos/{owner}/{repo}/issues/{issue_number}/labels', {
+  const labelObjectList = await octokit.request('GET /repos/{owner}/{repo}/issues/{issue_number}/labels', {
     owner: owner,
     repo: repo,
     issue_number: issueNumber
-  })
+  }).data
+
+  return labelObjectList.map((labelObject) => labelObject.name)
 }
 
 // Get the project with name passed into projectName from the current repo
