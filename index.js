@@ -159,9 +159,12 @@ async function getIssueLabels (issueNumber) {
     owner: owner,
     repo: repo,
     issue_number: issueNumber
-  }).data
+  })
 
-  return labelObjectList.map((labelObject) => labelObject.name)
+  console.log("LOLOLOLOLOLOLO")
+  console.log(labelObjectList)
+
+  return labelObjectList.data.map((labelObject) => labelObject.name)
 }
 
 // Get the project with name passed into projectName from the current repo
