@@ -272,6 +272,108 @@ function labelCards(cardData, labels) {
   })
 }
 
+// Validates a list of lables contains only strings
+//  @param    {number} column_labels_index The index of the column_labels object in the user args (for printing errors)
+//  @param    {array}  labels An array of labels as strings
+//  @return   {array}  An array of the valid labels
+//  @throws   {TypeError}  for a parameter of the incorrect type
+function validateLabels (column_labels_index, labels) {
+  if (!Number.isInteger(column_labels_index)) {
+    throw new TypeError('Param column_labels_index must be an integer')
+  }
+
+  if (!Array.isArray(labels)) {
+    throw new TypeError('Param labels must be an array')
+  }
+
+  return labels.filter((label) => {
+    const isValidLabel = isNonEmptyString(label)
+
+    if (!isValidLabel) {
+      console.warn(`WARNING: element at index=${column_labels_index} of columns_labels contains an invalid label: ${label}`)
+      console.warn(`  Labels must be non empty strings`)
+      console.warn(`  Omitting invalid label`)
+    }
+
+    return isValidLabel
+  })
+}
+
+// Validates an object containing a github column identifyer and a list of labels to add
+//   Removes extra or unusable data from the object
+//  @param    {string}  column_labels The object to be validated
+//  @param    {integer} column_labels_index The index of the column_labels object in the user args(for error printing)
+//  @throws   {Error}   When the column-labels object is fatally invalid
+function validateColumnLabels (column_labels, column_labels_index) {
+  if (!isObject(column_labels)) {
+    throw new TypeError(`WARNING: element at index=${column_labels_index} of columns_labels is not an object`)
+  }
+
+  if (!('labels' in column_labels)) {
+    throw new ReferenceError(`WARNING: element at index=${column_labels_index} of columns_labels is missing key "labels"`)
+  }
+
+  if ('column_id' in column_labels && isNonEmptyString(column_labels['column_id'])) {
+    delete column_labels['column_name']
+    delete column_labels['project_name']
+  } else if (('column_name' in column_labels) && isNonEmptyString(column_labels['column_name']) && ('project_name' in column_labels) && isNonEmptyString(column_labels['project_name'])) {
+    delete column_labels['column_id']
+  } else {
+    throw new ReferenceError(`WARNING: element at index=${column_labels_index} of columns_labels does not contain valid identifiers for a github column`)
+  }
+
+  let filtered_labels
+
+  try {
+    filtered_labels = validateLabels(column_labels_index, column_labels['labels'])
+  } catch (e) {
+    console.warn(e.message.split('\n', 1)[0])
+    filtered_labels = []
+  }
+
+  if (!filtered_labels.length) {
+    throw new Error(`WARNING: element at index=${column_labels_index} of columns_labels does not contain valid labels`)
+  }
+
+  column_labels.labels = filtered_labels
+}
+
+// Validates the columns_labels user arg
+//  @param    {string} columns_labels_as_string The value of columns_labels passed by the bot user
+//  @return   {array} An array of the valid objects containing column and label data
+//  @throws   {Error}  When the arguments are fatally invalid
+function validateColumnsLabels (columns_labels_as_string) {
+  let columns_labels_as_Object
+
+  try {
+    columns_labels_as_Object = JSON.parse(columns_labels_as_string)
+  } catch (e) {
+    console.error('ERROR: Could not parse param columns_labels as JSON')
+    throw e
+  }
+
+  if (!Array.isArray(columns_labels_as_Object)) {
+    throw new TypeError('ERROR: param columns_labels must be an array')
+  }
+
+  const valid_columns_labels = columns_labels_as_Object.filter((column_labels, index) => {
+    try {
+      validateColumnLabels(column_labels, index)
+      return true
+    } catch (e) {
+      console.warn(e.message.split('\n', 1)[0])
+      console.warn(`  Skipping element at index=${index}`)
+      return false
+    }
+  })
+
+  if (!valid_columns_labels.length) {
+    throw new Error('ERROR: Could not find a valid object with a column identifier and a list of labels')
+  }
+
+  return valid_columns_labels
+}
+
 async function main () {
   const validColumnsLabels = validateColumnsLabels(columns_labels)
 
