@@ -141,7 +141,7 @@ async function getColumnCardIssues (columnId) {
 }
 
 // Get a list of labels for an issue
-//  @param    {string} issueNumber The number of the issue to fetch labels for
+//  @param    {number} issueNumber The number of the issue to fetch labels for
 //  @return   {Promise} A promise representing fetching of the labels for an issue
 //    @fulfilled {Object} A list of objects each representing a label
 //  @throws   {TypeError}  for a parameter of the incorrect type
@@ -321,14 +321,25 @@ async function main () {
       continue
     }
 
-    const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
+    for (const card of cards) {
+      const issueNumberMatchCapture = card.content_url.match(/\/issues\/(\d+)$/)
 
-    console.log(`Labeled/relabeled ${cardsLabeledCount} of ${cards.length} card issues`)
+      if (!issueNumberMatchCapture || issueNumberMatchCapture.length < 2) {
+        console.warn(`Failed to extract issue number from url: ${card.content_url}`)
+        continue
+      }
+
+      const issueNumber = issueNumberMatchCapture[1]
+      console.log(await getIssueLabels(issueNumber))
+    }
+    //const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
+
+    //console.log(`Labeled/relabeled ${cardsLabeledCount} of ${cards.length} card issues`)
   }
 
   return
 
-  // Remove the label from the cards
+  /*// Remove the label from the cards
   cards.data.forEach(async card => {
     const matches = card.content_url.match(/\/issues\/(\d+)/);
 
@@ -350,7 +361,7 @@ async function main () {
       console.log(e.message);
       return true;
     }
-  });
+  })*/
 }
 
 main().catch((e) => {
