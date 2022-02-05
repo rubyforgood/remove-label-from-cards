@@ -163,7 +163,7 @@ async function getIssueLabels (issueNumber) {
 
   const labelsAsObject = {}
 
-  for (const label of labelObjectList) {
+  for (const label of labelObjectList.data) {
     labelsAsObject[label.name.toLowerCase()] = true
   }
 
