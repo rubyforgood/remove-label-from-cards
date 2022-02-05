@@ -307,7 +307,7 @@ function validateLabels (column_labels_index, labels) {
     }
 
     return isValidLabel
-  })
+  }).map((label) => label.toLowerCase())
 }
 
 // Validates an object containing a github column identifyer and a list of labels to add
@@ -444,6 +444,8 @@ async function main () {
 
       const issueNumber = issueNumberMatchCapture[1]
       console.log(await getIssueLabels(parseInt(issueNumber)))
+      console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+      console.log(column_labels['labels'])
     }
     //const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
 
