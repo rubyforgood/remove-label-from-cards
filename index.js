@@ -284,10 +284,10 @@ function labelCards(cardData, labels) {
 }
 
 // Removes labels found in one list of labels from another
-//  @param  {array} labels          The list of labels to remove labels from
-//  @param  {array} labelDifference The list of labels to remove
+//  @param  {object} labels          The list of labels to remove labels from as keys of an object
+//  @param  {array}  labelDifference The list of labels to remove
 //  @return {array} If any labels were removed, 
-//    A copy of labels with all the labels in labelDifference removed
+//    A copy of the keys of labels as an array with all the labels in labelDifference removed
 //    null otherwise
 //  @throws {TypeError}  for a parameter of the incorrect type
 function subtractLabels (labels, labelDifference) {
