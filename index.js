@@ -9,29 +9,29 @@ const {owner, repo} = github.context.repo
 const MAX_CARDS_PER_PAGE = 100 // from https://docs.github.com/en/rest/reference/projects#list-project-cards
 
 // Determines if an object is an object
-//  @param    {any} variable The object to check
-//  @returns  {boolean} true if variable is an object, false otherwise
+//  @param   {any} variable The object to check
+//  @returns {boolean} true if variable is an object, false otherwise
 function isObject (variable) {
   return typeof variable === 'object' && !Array.isArray(variable) && variable !== null
 }
 
 // Determines if an object is a nonempty string
-//  @param    {any} str The object to check
-//  @returns  {boolean} true if str is a nonempty string, false otherwise
+//  @param   {any} str The object to check
+//  @returns {boolean} true if str is a nonempty string, false otherwise
 function isNonEmptyString (str) {
   return typeof str === 'string' && str.length
 }
 
 // Lists up to MAX_CARDS_PER_PAGE cards from a column
-//  @param    {integer} columnId The id of the column containing the cards
-//  @param    {integer} pageNumber The page of up to MAX_CARDS_PER_PAGE cards to retrieve
+//  @param  {integer} columnId   The id of the column containing the cards
+//  @param  {integer} pageNumber The page of up to MAX_CARDS_PER_PAGE cards to retrieve
 //              default 1
-//  @return   {Promise} A promise representing fetching the page of cards
+//  @return {Promise} A promise representing fetching the page of cards
 //    @fulfilled {Array} The card data as an array of objects
-//  @throws   {TypeError}  for a parameter of the incorrect type
-//  @throws   {RangeError} if columnId is negative
-//  @throws   {RangeError} if pageNumber is less than 1
-//  @throws   {Error} if an error occurs while trying to fetch the card data
+//  @throws {TypeError}  for a parameter of the incorrect type
+//  @throws {RangeError} if columnId is negative
+//  @throws {RangeError} if pageNumber is less than 1
+//  @throws {Error}      if an error occurs while trying to fetch the card data
 async function getCardPage (columnId, pageNumber = 1) {
   if (typeof columnId === 'string') {
     columnId = parseInt(columnId)
@@ -70,14 +70,14 @@ async function getCardPage (columnId, pageNumber = 1) {
 }
 
 // Get a column by name in a project
-//  @param    {columnName} columnName The name of the column
-//  @param    {integer}    projectId The id of the project containing the column
-//  @return   {Promise} A promise representing fetching of the column
+//  @param  {columnName} columnName The name of the column
+//  @param  {integer}    projectId  The id of the project containing the column
+//  @return {Promise} A promise representing fetching of the column
 //    @fulfilled {Object} An object representing the first column with name matching columnName
 //                        undefined if the column could not be found
-//  @throws   {TypeError}  for a parameter of the incorrect type
-//  @throws   {RangeError}  if projectId is less than 1
-//  @throws   {Error} if an error occurs while trying to fetch the project data
+//  @throws {TypeError}  for a parameter of the incorrect type
+//  @throws {RangeError} if projectId is less than 1
+//  @throws {Error}      if an error occurs while trying to fetch the project data
 async function getColumn (columnName, projectId) {
   if (typeof projectId === 'string') {
     columnId = parseInt(projectId)
@@ -103,12 +103,12 @@ async function getColumn (columnName, projectId) {
 }
 
 // Lists all the cards for a column that are issues
-//  @param    {integer} columnId The id of the column containing the cards
-//  @return   {Promise} A promise representing fetching of card data
+//  @param  {integer} columnId The id of the column containing the cards
+//  @return {Promise} A promise representing fetching of card data
 //    @fulfilled {Array} The card data as an array of objects
-//  @throws   {TypeError}  for a parameter of the incorrect type
-//  @throws   {RangeError} if columnId is negative
-//  @throws   {Error} if an error occurs while trying to fetch the card data
+//  @throws {TypeError}  for a parameter of the incorrect type
+//  @throws {RangeError} if columnId is negative
+//  @throws {Error}      if an error occurs while trying to fetch the card data
 async function getColumnCardIssues (columnId) {
   if (typeof columnId === 'string') {
     columnId = parseInt(columnId)
@@ -144,12 +144,12 @@ async function getColumnCardIssues (columnId) {
 }
 
 // Get a list of labels for an issue
-//  @param    {number} issueNumber The number of the issue to fetch labels for
-//  @return   {Promise} A promise representing fetching of the labels for an issue
+//  @param  {number} issueNumber The number of the issue to fetch labels for
+//  @return {Promise} A promise representing fetching of the labels for an issue
 //    @fulfilled {Object} An object where the label strings are the keys with all characters lower case
-//  @throws   {TypeError}  for a parameter of the incorrect type
-//  @throws   {RangeError} when issueNumber is less than 1
-//  @throws   {Error}      if an error occurs while trying to fetch the project data
+//  @throws {TypeError}  for a parameter of the incorrect type
+//  @throws {RangeError} when issueNumber is less than 1
+//  @throws {Error}      if an error occurs while trying to fetch the project data
 async function getIssueLabels (issueNumber) {
   if (!Number.isInteger(issueNumber)) {
     throw new TypeError('Param issueNumber must be an integer')
@@ -196,8 +196,8 @@ async function getProject (projectName) {
 //  @param    {object} card   An object representing the card to be labeled
 //  @param    {Array}  labels The list of labels to be added
 //  @return   {Promise} A promise representing the labeling of the card
-//  @throws   {TypeError}  for a parameter of the incorrect type
-//  @throws   {Error} if an error occurs while labeling the card
+//  @throws   {TypeError} for a parameter of the incorrect type
+//  @throws   {Error}     if an error occurs while labeling the card
 async function labelCardIssue (card, labels) {
   if (!isObject(card)) {
     throw new TypeError('Param card is not an object')
@@ -329,9 +329,9 @@ function validateLabels (column_labels_index, labels) {
 
 // Validates an object containing a github column identifyer and a list of labels to add
 //   Removes extra or unusable data from the object
-//  @param    {string}  column_labels The object to be validated
+//  @param    {string}  column_labels       The object to be validated
 //  @param    {integer} column_labels_index The index of the column_labels object in the user args(for error printing)
-//  @throws   {Error}   When the column-labels object is fatally invalid
+//  @throws   {Error} When the column-labels object is fatally invalid
 function validateColumnLabels (column_labels, column_labels_index) {
   if (!isObject(column_labels)) {
     throw new TypeError(`WARNING: element at index=${column_labels_index} of columns_labels is not an object`)
@@ -369,7 +369,7 @@ function validateColumnLabels (column_labels, column_labels_index) {
 // Validates the columns_labels user arg
 //  @param    {string} columns_labels_as_string The value of columns_labels passed by the bot user
 //  @return   {array} An array of the valid objects containing column and label data
-//  @throws   {Error}  When the arguments are fatally invalid
+//  @throws   {Error} When the arguments are fatally invalid
 function validateColumnsLabels (columns_labels_as_string) {
   let columns_labels_as_Object
 
