@@ -283,11 +283,28 @@ function labelCards(cardData, labels) {
   })
 }
 
+// Removes labels found in one list of labels from another
+//  @param  {array} labels          The list of labels to remove labels from
+//  @param  {array} labelDifference The list of labels to remove
+//  @return {array} If any labels were removed, 
+//    A copy of labels with all the labels in labelDifference removed
+//    null otherwise
+//  @throws {TypeError}  for a parameter of the incorrect type
+function subtractLabels (labels, labelDifference) {
+  if (!Array.isArray(labels)) {
+    throw new TypeError('Param labels must be an array')
+  }
+
+  if (!Array.isArray(labelDifference)) {
+    throw new TypeError('Param labelDifference must be an array')
+  }
+}
+
 // Validates a list of lables contains only strings
-//  @param    {number} column_labels_index The index of the column_labels object in the user args (for printing errors)
-//  @param    {array}  labels An array of labels as strings
-//  @return   {array}  An array of the valid labels
-//  @throws   {TypeError}  for a parameter of the incorrect type
+//  @param  {number} column_labels_index The index of the column_labels object in the user args (for printing errors)
+//  @param  {array}  labels              An array of labels as strings
+//  @return {array}  An array of the valid labels
+//  @throws {TypeError}  for a parameter of the incorrect type
 function validateLabels (column_labels_index, labels) {
   if (!Number.isInteger(column_labels_index)) {
     throw new TypeError('Param column_labels_index must be an integer')
@@ -444,8 +461,6 @@ async function main () {
 
       const issueNumber = issueNumberMatchCapture[1]
       console.log(await getIssueLabels(parseInt(issueNumber)))
-      console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-      console.log(column_labels['labels'])
     }
     //const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
 
