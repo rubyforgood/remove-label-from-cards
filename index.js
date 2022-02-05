@@ -146,7 +146,7 @@ async function getColumnCardIssues (columnId) {
 // Get a list of labels for an issue
 //  @param    {number} issueNumber The number of the issue to fetch labels for
 //  @return   {Promise} A promise representing fetching of the labels for an issue
-//    @fulfilled {Array} An array of label strings
+//    @fulfilled {Array} An array of label strings with all characters lower case
 //  @throws   {TypeError}  for a parameter of the incorrect type
 //  @throws   {RangeError} when issueNumber is less than 1
 //  @throws   {Error}      if an error occurs while trying to fetch the project data
@@ -161,10 +161,7 @@ async function getIssueLabels (issueNumber) {
     issue_number: issueNumber
   })
 
-  console.log("LOLOLOLOLOLOLO")
-  console.log(labelObjectList)
-
-  return labelObjectList.data.map((labelObject) => labelObject.name)
+  return labelObjectList.data.map((labelObject) => labelObject.name.toLowerCase())
 }
 
 // Get the project with name passed into projectName from the current repo
