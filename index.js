@@ -192,13 +192,13 @@ async function getProject (projectName) {
   })
 }
 
-// Adds a label to a card if it is an issue
+// Ensures a card issue does not contain a set of labels
 //  @param    {object} card   An object representing the card to be labeled
-//  @param    {Array}  labels The list of labels to be added
+//  @param    {Array}  labels The set of labels the card issue cannot contain
 //  @return   {Promise} A promise representing the labeling of the card
 //  @throws   {TypeError} for a parameter of the incorrect type
 //  @throws   {Error}     if an error occurs while labeling the card
-async function labelCardIssue (card, labels) {
+async function stripLabelsFromCardIssue (card, labels) {
   if (!isObject(card)) {
     throw new TypeError('Param card is not an object')
   }
@@ -217,23 +217,40 @@ async function labelCardIssue (card, labels) {
     throw new Error(`Failed to extract issue number from url: ${card.content_url}`)
   }
 
+  let issueLables
   const issueNumber = issueNumberMatchCapture[1]
 
-  return octokit.issues.addLabels({
+  try {
+    issueLables = await getIssueLabels(parseInt(issueNumber))
+  } catch (e) {
+    console.error(`Warning: Failed to fetch labels from issue with number "${issueNumber}"`)
+    console.error('  Skipping unlabeling issue')
+    console.error(e.message)
+
+    continue
+  }
+
+  const newLabels = subtractLabels(issueLables, labels)
+
+  if (newLabels) {
+    console.log(`INFO: Replacing labels for issue #${issueNumber} from ${issueLables} to ${newLabels}`)
+  }
+
+  /*return octokit.issues.addLabels({
     owner: owner,
     repo: repo,
     issue_number: issueNumber,
     labels: labels
-  })
+  })*/
 }
 
-// Adds a github labeld to each card of a list
-//  @param    {Array} cardData The list of cards to be labeled
-//  @param    {Array} labels   The list of labels to be added
-//  @return   {Promise} A promise representing labeling the list of cards
-//    @fulfilled {integer} The number of cards successfully labeled
+// Ensures all card issues do not contain a set of labels
+//  @param    {Array} cardData The list of cards to have labels removed from
+//  @param    {Array} labels   The list of labels to be removed
+//  @return   {Promise} A promise representing unlabeling the list of cards
+//    @fulfilled {integer} The number of cards successfully unlabeled
 //    @rejected  {TypeError}  for a parameter of the incorrect type
-function labelCards(cardData, labels) {
+function removeLabelsFromCards(cardData, labels) {
   const delayBetweenRequestsMS = cardData.length >= MAX_CARDS_PER_PAGE ? 1000 : 0
 
   if (delayBetweenRequestsMS) {
@@ -256,7 +273,7 @@ function labelCards(cardData, labels) {
       return
     }
 
-    let cardLabelAttemptCount = 0
+    let cardStripLabelAttemptCount = 0
     let cardsLabeledCount = 0
     let requestSentCount = 0
 
@@ -269,9 +286,9 @@ function labelCards(cardData, labels) {
         console.warn(`WARNING: Failed to label card with id: ${card.id}`)
         console.warn(e.message)
       }).finally(() => {
-        cardLabelAttemptCount++
+        cardStripLabelAttemptCount++
 
-        if (cardLabelAttemptCount === cardData.length) {
+        if (cardLabelAttemptCount >= cardData.length) {
           resolve(cardsLabeledCount)
         }
       })
@@ -465,48 +482,12 @@ async function main () {
       continue
     }
 
-    for (const card of cards) {
-      const issueNumberMatchCapture = card.content_url.match(/\/issues\/(\d+)$/)
+    const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
 
-      if (!issueNumberMatchCapture || issueNumberMatchCapture.length < 2) {
-        console.warn(`Failed to extract issue number from url: ${card.content_url}`)
-        continue
-      }
-
-      const issueNumber = issueNumberMatchCapture[1]
-      const issueLables = await getIssueLabels(parseInt(issueNumber))
-      console.log(subtractLabels(issueLables, column_labels['labels']))
-    }
-    //const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
-
-    //console.log(`Labeled/relabeled ${cardsLabeledCount} of ${cards.length} card issues`)
+    console.log(`Removed labels from ${cardsLabeledCount} of ${cards.length} card issues`)
   }
 
   return
-
-  /*// Remove the label from the cards
-  cards.data.forEach(async card => {
-    const matches = card.content_url.match(/\/issues\/(\d+)/);
-
-    if (!matches) {
-      console.log(`Couldn't match the regexp against '${card.content_url}'.`);
-      return true;
-    }
-    
-    const issueNumber = matches[1];
-    try {
-      await octokit.issues.removeLabel({
-        owner: repoOwner,
-        repo: repo,
-        issue_number: issueNumber,
-        name: labelToRemove
-      });
-    }
-    catch (e) {
-      console.log(e.message);
-      return true;
-    }
-  })*/
 }
 
 main().catch((e) => {
