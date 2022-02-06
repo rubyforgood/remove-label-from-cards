@@ -482,7 +482,7 @@ async function main () {
       continue
     }
 
-    const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
+    const cardsLabeledCount = await removeLabelsFromCards(cards, column_labels['labels'])
 
     console.log(`Removed labels from ${cardsLabeledCount} of ${cards.length} card issues`)
   }
