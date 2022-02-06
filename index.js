@@ -217,9 +217,8 @@ async function stripLabelsFromCardIssue (card, labels) {
     throw new Error(`Failed to extract issue number from url: ${card.content_url}`)
   }
 
-  const issueLables = await getIssueLabels(parseInt(issueNumber))
   const issueNumber = issueNumberMatchCapture[1]
-
+  const issueLables = await getIssueLabels(parseInt(issueNumber))
 
   const newLabels = subtractLabels(issueLables, labels)
 
