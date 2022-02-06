@@ -280,7 +280,7 @@ function removeLabelsFromCards(cardData, labels) {
     const requestInterval = setInterval(() => {
       const card = cardData[requestSentCount]
 
-      labelCardIssue(card, labels).then(() => {
+      stripLabelsFromCardIssue(card, labels).then(() => {
         cardsLabeledCount++
       }).catch((e) => {
         console.warn(`WARNING: Failed to label card with id: ${card.id}`)
