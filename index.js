@@ -279,7 +279,7 @@ function removeLabelsFromCards(cardData, labels) {
       }).finally(() => {
         cardStripLabelAttemptCount++
 
-        if (cardLabelAttemptCount >= cardData.length) {
+        if (cardStripLabelAttemptCount >= cardData.length) {
           resolve(cardsLabeledCount)
         }
       })
