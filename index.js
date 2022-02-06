@@ -298,6 +298,20 @@ function subtractLabels (labels, labelDifference) {
   if (!Array.isArray(labelDifference)) {
     throw new TypeError('Param labelDifference must be an array')
   }
+
+  const labelsCopy = Object.assign({}, labels)
+  let isLabelSubtracted = false
+
+  for (const label of labelDifference) {
+    if (label in labelsCopy) {
+      delete labelsCopy[label]
+      isLabelSubtracted = true
+    }
+  }
+
+  if (isLabelSubtracted) {
+    return Object.keys(labelsCopy)
+  }
 }
 
 // Validates a list of lables contains only strings
@@ -460,7 +474,8 @@ async function main () {
       }
 
       const issueNumber = issueNumberMatchCapture[1]
-      console.log(await getIssueLabels(parseInt(issueNumber)))
+      const issueLables = await getIssueLabels(parseInt(issueNumber))
+      console.log(subtractLabels(issueLables, column_labels['labels']))
     }
     //const cardsLabeledCount = await labelCards(cards, column_labels['labels'])
 
