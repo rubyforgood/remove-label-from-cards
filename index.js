@@ -217,18 +217,9 @@ async function stripLabelsFromCardIssue (card, labels) {
     throw new Error(`Failed to extract issue number from url: ${card.content_url}`)
   }
 
-  let issueLables
+  const issueLables = await getIssueLabels(parseInt(issueNumber))
   const issueNumber = issueNumberMatchCapture[1]
 
-  try {
-    issueLables = await getIssueLabels(parseInt(issueNumber))
-  } catch (e) {
-    console.error(`Warning: Failed to fetch labels from issue with number "${issueNumber}"`)
-    console.error('  Skipping unlabeling issue')
-    console.error(e.message)
-
-    continue
-  }
 
   const newLabels = subtractLabels(issueLables, labels)
 
