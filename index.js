@@ -291,8 +291,8 @@ function labelCards(cardData, labels) {
 //    null otherwise
 //  @throws {TypeError}  for a parameter of the incorrect type
 function subtractLabels (labels, labelDifference) {
-  if (!Array.isArray(labels)) {
-    throw new TypeError('Param labels must be an array')
+  if (!isObject(labels)) {
+    throw new TypeError('Param labels must be an object')
   }
 
   if (!Array.isArray(labelDifference)) {
