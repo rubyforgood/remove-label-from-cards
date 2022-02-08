@@ -224,14 +224,16 @@ async function stripLabelsFromCardIssue (card, labels) {
 
   if (newLabels) {
     console.log(`INFO: Replacing labels for issue #${issueNumber} from ${issueLables} to ${newLabels}`)
+
+    return octokit.request('PUT /repos/{owner}/{repo}/issues/{issue_number}/labels', {
+      owner: owner,
+      repo: repo,
+      issue_number: issueNumber,
+      labels: newLabels
+    })
   }
 
-  /*return octokit.issues.addLabels({
-    owner: owner,
-    repo: repo,
-    issue_number: issueNumber,
-    labels: labels
-  })*/
+  return null
 }
 
 // Ensures all card issues do not contain a set of labels
@@ -270,8 +272,10 @@ function removeLabelsFromCards(cardData, labels) {
     const requestInterval = setInterval(() => {
       const card = cardData[requestSentCount]
 
-      stripLabelsFromCardIssue(card, labels).then(() => {
-        cardsLabeledCount++
+      stripLabelsFromCardIssue(card, labels).then((response) => {
+        if (response !== null && 200 <= response.status && response.status < 300 ) {
+          cardsLabeledCount++
+        }
       }).catch((e) => {
         console.warn(`WARNING: Failed to label card with id: ${card.id}`)
         console.warn(e.message)
