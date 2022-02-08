@@ -223,7 +223,7 @@ async function stripLabelsFromCardIssue (card, labels) {
   const newLabels = subtractLabels(issueLables, labels)
 
   if (newLabels) {
-    console.log(`INFO: Replacing labels for issue #${issueNumber} from ${issueLables} to ${newLabels}`)
+    console.log(`INFO: Replacing labels for issue #${issueNumber} from ${Object.keys(issueLables)} to ${newLabels}`)
 
     return octokit.request('PUT /repos/{owner}/{repo}/issues/{issue_number}/labels', {
       owner: owner,
