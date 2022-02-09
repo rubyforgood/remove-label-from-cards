@@ -23,7 +23,7 @@ jobs:
     name: Remove labels based on column
     steps:
       - name: Remove labels based on column
-        uses: rubyforgood/remove-label-from-cards@v2.0
+        uses: rubyforgood/remove-label-from-cards@2.0
         id: remove-help-wanted-labels
         with:
           token: ${{secrets.GITHUB_TOKEN}}
